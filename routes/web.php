@@ -16,19 +16,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
 Route::get('/', [MaidController::class, 'index'])->name('login');
 Route::post('/', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout']);
 Route::post('/register', [UserController::class, 'store']);
 
 Route::group(["prefix" => "admin", "middleware" => ["auth", "adminCheck"], "as" => "admin."], function () {
-    Route::view('/', 'welcome');
+    Route::view('/', 'admin.blank');
+    Route::view('/requests', 'admin.blank');
+    Route::view('/pending', 'admin.blank');
+    Route::view('/approved', 'admin.blank');
+    Route::view('/settings', 'admin.blank');
 });
 
 Route::group(["prefix" => "employer", "middleware" => ["auth", "employerCheck"], "as" => "employer."], function () {
-    Route::view('/', 'welcome');
+    Route::view('/', 'employer.blank');
+    Route::view('/settings', 'employer.blank');
 });
