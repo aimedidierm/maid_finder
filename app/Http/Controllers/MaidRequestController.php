@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Maid;
 use App\Models\MaidRequest;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,23 @@ class MaidRequestController extends Controller
      */
     public function index()
     {
-        //
+        $request = MaidRequest::latest()->get();
+        $request->load('users', 'maids');
+        return view('admin.requests', ['data' => $request]);
+    }
+
+    public function pending()
+    {
+        $request = MaidRequest::latest()->where('status', 'pending')->get();
+        $request->load('users', 'maids');
+        return view('admin.pending', ['data' => $request]);
+    }
+
+    public function approved()
+    {
+        $request = MaidRequest::latest()->where('status', 'payed')->get();
+        $request->load('users', 'maids');
+        return view('admin.approved', ['data' => $request]);
     }
 
     /**
@@ -60,6 +77,18 @@ class MaidRequestController extends Controller
      */
     public function destroy(MaidRequest $maidRequest)
     {
-        //
+        $maidRequest->status = 'closed';
+        $maidRequest->update();
+        return redirect('/admin/pending');
+    }
+
+    public function approve(MaidRequest $maidRequest)
+    {
+        $maid = Maid::find($maidRequest->maid_id);
+        $maid->openToWork = false;
+        $maid->update();
+        $maidRequest->status = 'payed';
+        $maidRequest->update();
+        return redirect('/admin/pending');
     }
 }

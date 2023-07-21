@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -20,7 +21,12 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $user = User::find(Auth::id());
+        if ($user->role == 'admin') {
+            return view('admin.settings', ['data' => $user]);
+        } else {
+            return 'Hello';
+        }
     }
 
     /**
@@ -75,7 +81,7 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        return $request;
     }
 
     /**

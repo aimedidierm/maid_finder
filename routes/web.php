@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MaidController;
+use App\Http\Controllers\MaidRequestController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,20 +17,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [MaidController::class, 'index'])->name('login');
+Route::get('/', [MaidController::class, 'create'])->name('login');
 Route::post('/', [AuthController::class, 'login']);
 Route::get('/logout', [AuthController::class, 'logout']);
 Route::post('/register', [UserController::class, 'store']);
 
 Route::group(["prefix" => "admin", "middleware" => ["auth", "adminCheck"], "as" => "admin."], function () {
-    Route::view('/', 'admin.blank');
-    Route::view('/requests', 'admin.blank');
-    Route::view('/pending', 'admin.blank');
-    Route::view('/approved', 'admin.blank');
-    Route::view('/settings', 'admin.blank');
+    Route::resource('/', MaidController::class)->only('index', 'store');
+    Route::get('/maids/delete/{maid}', [MaidController::class, 'destroy']);
+    Route::get('/requests', [MaidRequestController::class, 'index']);
+    Route::get('/pending', [MaidRequestController::class, 'pending']);
+    Route::get('/approved', [MaidRequestController::class, 'approved']);
+    Route::get('/request/approve/{maidRequest}', [MaidRequestController::class, 'approve']);
+    Route::get('/request/reject/{maidRequest}', [MaidRequestController::class, 'destroy']);
+    Route::get('/settings', [UserController::class, 'create']);
+    Route::post('/settings/{id}', [UserController::class, 'update']);
 });
 
 Route::group(["prefix" => "employer", "middleware" => ["auth", "employerCheck"], "as" => "employer."], function () {
-    Route::view('/', 'employer.blank');
-    Route::view('/settings', 'employer.blank');
+    Route::get('/', [MaidController::class, 'employerList']);
+    Route::view('/requests', 'employer.request');
+    Route::view('/settings', 'employer.settings');
 });

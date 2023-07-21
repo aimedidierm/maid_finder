@@ -42,4 +42,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function maidRequest()
+    {
+        return $this->hasMany(MaidRequest::class, 'user_id');
+    }
 }
