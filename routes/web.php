@@ -31,11 +31,13 @@ Route::group(["prefix" => "admin", "middleware" => ["auth", "adminCheck"], "as" 
     Route::get('/request/approve/{maidRequest}', [MaidRequestController::class, 'approve']);
     Route::get('/request/reject/{maidRequest}', [MaidRequestController::class, 'destroy']);
     Route::get('/settings', [UserController::class, 'create']);
-    Route::post('/settings/{id}', [UserController::class, 'update']);
+    Route::put('/settings', [UserController::class, 'update']);
 });
 
 Route::group(["prefix" => "employer", "middleware" => ["auth", "employerCheck"], "as" => "employer."], function () {
     Route::get('/', [MaidController::class, 'employerList']);
-    Route::view('/requests', 'employer.request');
-    Route::view('/settings', 'employer.settings');
+    Route::post('/', [MaidRequestController::class, 'store']);
+    Route::get('/requests', [MaidRequestController::class, 'employerList']);
+    Route::get('/settings', [UserController::class, 'create']);
+    Route::put('/settings', [UserController::class, 'update']);
 });

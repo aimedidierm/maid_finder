@@ -25,7 +25,7 @@ class UserController extends Controller
         if ($user->role == 'admin') {
             return view('admin.settings', ['data' => $user]);
         } else {
-            return 'Hello';
+            return view('employer.settings', ['data' => $user]);
         }
     }
 
@@ -79,9 +79,25 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        return $request;
+        $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'phone' => 'required|numeric',
+            'password' => 'required|string',
+            'confirmPassword' => 'required|string'
+        ]);
+        $user = User::find(Auth::id());
+        if ($request->password == $request->confirmPassword) {
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->phone = $request->phone;
+            $user->password = $request->password;
+            return redirect('/employer/settings');
+        } else {
+            return back()->withErrors('Passwords not match');
+        }
     }
 
     /**

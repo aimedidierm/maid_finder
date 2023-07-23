@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Maid;
 use App\Models\MaidRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MaidRequestController extends Controller
 {
@@ -45,7 +46,31 @@ class MaidRequestController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate(
+            [
+                'maid' => 'required|numeric',
+                'phone' => 'required|numeric|regex:/^07\d{8}$/',
+                'description' => 'required|string',
+            ],
+            [
+                'phone.regex' => 'The phone number must start with "07" and be 10 digits long.',
+            ]
+        );
+        $maid = Maid::find($request->maid);
+        if ($maid != null) {
+            $maidRequest = new MaidRequest;
+            $maidRequest->description = $request->description;
+            $maidRequest->user_id = Auth::id();
+            $maidRequest->maid_id = $request->maid;
+            $maidRequest->status = 'pending';
+            $maidRequest->created_at = now();
+            $maidRequest->updated_at = null;
+            $maidRequest->save();
+            //Add in payments
+            return redirect('/employer');
+        } else {
+            return redirect('/employer')->withErrors('Maid not found');
+        }
     }
 
     /**
@@ -90,5 +115,12 @@ class MaidRequestController extends Controller
         $maidRequest->status = 'payed';
         $maidRequest->update();
         return redirect('/admin/pending');
+    }
+
+    public function employerList()
+    {
+        $request = MaidRequest::latest()->where('user_id', Auth::id())->get();
+        $request->load('users', 'maids');
+        return view('employer.request', ['data' => $request]);
     }
 }
