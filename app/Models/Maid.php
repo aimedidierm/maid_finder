@@ -14,4 +14,9 @@ class Maid extends Model
     {
         return $this->hasMany(MaidRequest::class, 'maid_id');
     }
+
+    public function contracts()
+    {
+        return $this->hasMany(Contract::class, 'maid_id');
+    }
 }

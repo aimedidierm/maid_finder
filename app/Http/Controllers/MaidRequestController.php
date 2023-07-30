@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Maid;
 use App\Models\MaidRequest;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class MaidRequestController extends Controller
 {
@@ -21,14 +23,14 @@ class MaidRequestController extends Controller
 
     public function pending()
     {
-        $request = MaidRequest::latest()->where('status', 'pending')->get();
+        $request = MaidRequest::latest()->where('status', 'payed')->get();
         $request->load('users', 'maids');
         return view('admin.pending', ['data' => $request]);
     }
 
     public function approved()
     {
-        $request = MaidRequest::latest()->where('status', 'payed')->get();
+        $request = MaidRequest::latest()->where('status', 'approved')->get();
         $request->load('users', 'maids');
         return view('admin.approved', ['data' => $request]);
     }
@@ -57,6 +59,7 @@ class MaidRequestController extends Controller
             ]
         );
         $maid = Maid::find($request->maid);
+        $token = Str::random(10);
         if ($maid != null) {
             $maidRequest = new MaidRequest;
             $maidRequest->description = $request->description;
@@ -66,7 +69,18 @@ class MaidRequestController extends Controller
             $maidRequest->created_at = now();
             $maidRequest->updated_at = null;
             $maidRequest->save();
-            //Add in payments
+
+            $payment = new Payment;
+            $payment->phone = $request->phone;
+            $payment->amount = 1000;
+            $payment->user_id = Auth::id();
+            $payment->maid_request_id = $maidRequest->id;
+            $payment->status = 'pending';
+            $payment->token = $token;
+            $payment->created_at = now();
+            $payment->updated_at = null;
+            $payment->save();
+            //send payment request
             return redirect('/employer');
         } else {
             return redirect('/employer')->withErrors('Maid not found');
@@ -112,7 +126,7 @@ class MaidRequestController extends Controller
         $maid = Maid::find($maidRequest->maid_id);
         $maid->openToWork = false;
         $maid->update();
-        $maidRequest->status = 'payed';
+        $maidRequest->status = 'approved';
         $maidRequest->update();
         return redirect('/admin/pending');
     }

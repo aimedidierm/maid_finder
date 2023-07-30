@@ -39,7 +39,7 @@ class UserController extends Controller
             'address' => 'required|string',
             'gender' => 'required|in:male,female',
             'phone' => 'required|string',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|string',
             'confirmPassword' => 'required|string',
         ]);

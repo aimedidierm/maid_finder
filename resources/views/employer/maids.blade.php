@@ -60,6 +60,9 @@
                                 </button>
                             </div>
                             <div class="p-6 space-y-6">
+                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                    Service fee is 1000 Rwf
+                                </h3>
                                 <form class="space-y-6" action="/employer" method="POST">
                                     @csrf
                                     <div>

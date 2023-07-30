@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ContractController;
 use App\Http\Controllers\MaidController;
 use App\Http\Controllers\MaidRequestController;
 use App\Http\Controllers\UserController;
@@ -32,6 +33,7 @@ Route::group(["prefix" => "admin", "middleware" => ["auth", "adminCheck"], "as" 
     Route::get('/request/reject/{maidRequest}', [MaidRequestController::class, 'destroy']);
     Route::get('/settings', [UserController::class, 'create']);
     Route::put('/settings', [UserController::class, 'update']);
+    Route::resource('/contracts', ContractController::class)->only('index');
 });
 
 Route::group(["prefix" => "employer", "middleware" => ["auth", "employerCheck"], "as" => "employer."], function () {
@@ -40,4 +42,7 @@ Route::group(["prefix" => "employer", "middleware" => ["auth", "employerCheck"],
     Route::get('/requests', [MaidRequestController::class, 'employerList']);
     Route::get('/settings', [UserController::class, 'create']);
     Route::put('/settings', [UserController::class, 'update']);
+    Route::resource('/contracts', ContractController::class)->only('index', 'store');
+    Route::get('/contract/{id}', [ContractController::class, 'paper']);
+    Route::post('/contract', [ContractController::class, 'signed']);
 });

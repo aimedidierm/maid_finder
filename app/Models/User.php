@@ -48,4 +48,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(MaidRequest::class, 'user_id');
     }
+
+    public function contracts()
+    {
+        return $this->hasMany(Contract::class, 'user_id');
+    }
 }

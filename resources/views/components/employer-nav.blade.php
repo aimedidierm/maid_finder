@@ -35,6 +35,15 @@
                 </a>
             </li>
             <li>
+                <a href="/employer/contracts"
+                    class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                    <span class="material-symbols-outlined">
+                        file_copy
+                    </span>
+                    <span class="flex-1 ml-3 whitespace-nowrap">Your contracts</span>
+                </a>
+            </li>
+            <li>
                 <a href="/employer/settings"
                     class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                     <span class="material-symbols-outlined">
