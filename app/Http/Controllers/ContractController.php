@@ -18,15 +18,16 @@ class ContractController extends Controller
     public function index()
     {
         $contracts = Contract::latest()->get();
+        $userConracts = Contract::latest()->where('user_id', Auth::id())->get();
         $contracts->load('maids');
         $maids = MaidRequest::where('user_id', Auth::id())->where('status', 'approved')->get();
         $unSigned = Contract::where('user_id', Auth::id())->where('status', 'pending')->get();
         $unSigned->load('maids');
         $maids->load('maids');
         if (Auth::user()->role == 'admin') {
-            return view('admin.contracts');
+            return view('admin.contracts', ['data' => $contracts, 'maids' => $maids, 'unSigned' => $unSigned]);
         } else {
-            return view('employer.contracts', ['data' => $contracts, 'maids' => $maids, 'unSigned' => $unSigned]);
+            return view('employer.contracts', ['data' => $userConracts, 'maids' => $maids, 'unSigned' => $unSigned]);
         }
     }
 
