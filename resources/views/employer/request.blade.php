@@ -42,6 +42,7 @@
                     </tr>
                     @else
                     @foreach ($data as $item)
+                    @if ($item->maids != null)
                     <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
                         <td class="px-6 py-4">
                             <a href="{{$item->maids->photo}}">
@@ -65,6 +66,7 @@
                         </td>
                         <td class="px-6 py-4">{{$item->status}}</td>
                     </tr>
+                    @endif
                     @endforeach
                     @endif
                 </tbody>
